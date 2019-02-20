@@ -16,13 +16,13 @@
                         <div class="card h-100">
                             <img class="card-img-top" src="https://picsum.photos/200" alt="Card image cap">
                             <div class="position-absolute action-room">
-                                <a href="#">
+                                <a href="{{ route('rooms.edit', ['id' => $room->id]) }}">
                                     <span class="badge badge-success p-2"><i class="fas fa-edit"></i></span>
                                 </a>
                                 <a href="#" onclick="document.getElementById('delete-form').submit()">
                                     <span class="badge badge-danger p-2"><i class="fas fa-trash"></i></span>
                                     <form action="{{ route('rooms.destroy' , $room->id)}}"
-                                          method="POST" class="d-none" id="delete-form">
+                                          method="POST"     class="d-none" id="delete-form">
                                         <input name="_method" type="hidden" value="DELETE">
                                         <input name="id" type="hidden" value="{{ $room->id }}">
                                         {{ csrf_field() }}
@@ -32,7 +32,7 @@
 
                             </div>
                             <div class="card-body d-flex justify-content-between flex-column">
-                                <h5 class="card-title">Room {{$room->name}}</h5>
+                                <h5 class="card-title">Room <strong>{{$room->name}}</strong></h5>
                                 <p class="card-text">{{ $room->description }}</p>
                                 <a href="{{ route('rooms.show', ['id' => $room->id]) }}" class="btn btn-outline-primary">Go {{$room->name}}!</a>
                             </div>

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Message;
 use App\Room;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Route;
 
 class RoomsController extends Controller
 {
@@ -20,7 +19,7 @@ class RoomsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
         $viewData = [
             'rooms' => Room::all()
@@ -79,7 +78,8 @@ class RoomsController extends Controller
      */
     public function edit($id)
     {
-        //
+        $room = Room::query()->findOrFail($id);
+        return view('room.edit', compact('room'));
     }
 
     /**
@@ -91,7 +91,14 @@ class RoomsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $room = Room::query()->findOrFail($id);
+        $updateData = $request->only([
+            'name',
+            'description',
+        ]);
+        $room->update($updateData);
+
+        return redirect(\route('rooms.index'));
     }
 
     /**
