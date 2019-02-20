@@ -24,7 +24,7 @@
                                        value="{{ old('message') }}" required autofocus>
                             </div>
                             <div class="col-2 pl-1">
-                                <button type="submit" class="btn btn-primary w-100" id="send_message">
+                                <button type="submit" class="btn btn-primary text-center" id="send_message">
                                     {{ __('Submit') }}
                                 </button>
                             </div>
@@ -42,7 +42,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4 order-sm-first order-md-2 mb-3">
+        <div class="col-md-4 order-sm-first order-md-2 mb-3 mt-2 mt-md-0">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <div>Online</div>
@@ -70,6 +70,7 @@
                     if (response.data.status)
                     {
                         $('#content_message').empty();
+                        $('#content_message').append('<div class="my-2"><span class="font-italic small alert alert-secondary p-1">Message deleted</span></div>');
                     }else {
                         alert("Failed");
                     }

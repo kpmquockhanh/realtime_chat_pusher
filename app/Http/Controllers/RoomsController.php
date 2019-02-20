@@ -9,6 +9,12 @@ use Illuminate\Routing\Route;
 
 class RoomsController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -42,7 +48,8 @@ class RoomsController extends Controller
     public function store(Request $request)
     {
         $insertData = $request->only([
-            'name'
+            'name',
+            'description',
         ]);
         Room::query()->create($insertData);
 
@@ -61,7 +68,7 @@ class RoomsController extends Controller
             'room' => Room::query()->findOrFail($id),
             'messages' => Message::query()->where('room_id', $id)->orderByDesc('created_at')->get()
         ];
-        return view('room.show')->with($viewData);
+        return view('room.room')->with($viewData);
     }
 
     /**
@@ -89,12 +96,14 @@ class RoomsController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @return bool
+     * @throws \Exception
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        Room::query()->findOrFail($request->id)->delete();
+
+        return redirect(\route('rooms.index'));
     }
 }
