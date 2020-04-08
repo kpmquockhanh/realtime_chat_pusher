@@ -24,20 +24,23 @@
                                        value="{{ old('message') }}" required autofocus>
                             </div>
                             <div class="col-2 pl-1">
-                                <button type="submit" class="btn btn-primary text-center" id="send_message">
-                                    {{ __('Submit') }}
+                                <button type="submit" class="w-100 btn btn-primary text-center" id="send_message">
+                                    {{ __('Send') }}
                                 </button>
                             </div>
                         </div>
                     </div>
 
                     <div id="content_message">
-                        @foreach($messages as $message)
-                            @include('components.message', [
-                            'name' => $message->user->name,
-                            'message' => $message->message,
-                            ])
-                        @endforeach
+                        <div class="col-10 p-0">
+                            @foreach($messages as $message)
+                                @include('components.message', [
+                                'name' => $message->user->name,
+                                'message' => $message->message,
+                                'isOwner' => $message->user_id === \Illuminate\Support\Facades\Auth::id()
+                                ])
+                            @endforeach
+                        </div>
                     </div>
                 </div>
             </div>
@@ -60,6 +63,7 @@
         let body = $('body');
         let name = '{{ Auth::user()->name }}';
         body.on('click', '#send_message', function () {
+            alert();
             sendMessage();
         });
         body.on('click', '#delete_all', function () {
@@ -90,7 +94,7 @@
 
         function sendMessage() {
             let text = $('#text').val();
-            $('#content_message').prepend(`<div class="my-2"><span class="alert alert-info p-1"><strong>`+ name + `</strong>: ` + text +`</span></div>`);
+            $('#content_message > div').prepend(`<div class="py-2 text-right"><span class="alert alert-success p-1"><strong>`+ name +`</strong>: `+ text +`</span></div>`);
             $.get('{{route('user.send.message')}}', {
                 'message': text ? text : 'unknown',
                 'room_id': '{{ $room->id }}',

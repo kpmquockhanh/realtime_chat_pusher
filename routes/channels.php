@@ -13,5 +13,5 @@ use Illuminate\Support\Facades\Broadcast;
 */
 
 Broadcast::channel('room-{id}', function ($user, $id) {
-    return ['id' => $user->id, 'name' => $user->name];
+    return $user;
 });

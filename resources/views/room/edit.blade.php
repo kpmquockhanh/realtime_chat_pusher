@@ -6,7 +6,7 @@
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <div>Create room</div>
+                        <div>Update room</div>
                         <div>
                             <a href="{{ route('rooms.index') }}" class="btn btn-secondary">Back</a>
                         </div>

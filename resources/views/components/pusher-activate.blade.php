@@ -1,5 +1,5 @@
 <script>
-    // Pusher.logToConsole = true;
+    Pusher.logToConsole = true;
 
     var pusher = new Pusher('{{env('PUSHER_APP_KEY')}}', {
         cluster: 'ap1',
@@ -15,7 +15,7 @@
     let channel = pusher.subscribe('presence-room-' + '{{$room->id}}');
     channel.bind('has-message', function(data) {
         if (parseInt(authUserID) !== data.user_id) {
-            $('#content_message').prepend('<div class="my-2"><span class="alert alert-info p-1"><strong>'+ data.name + '</strong>: ' + data.message +'</span></div>');
+            $('#content_message > div').prepend(`<div class="py-2"><span class="alert alert-info p-1"><strong>`+ data.name +`</strong>: `+ data.message +`</span></div>`);
         }
     });
 
@@ -42,6 +42,12 @@
         $.each(members.members, function (i, member) {
             addMemberOnline(member);
         })
+    });
+
+    channel.bind('pusher:subscription_error', function(code) {
+        if (code === 403) {
+            window.location.href = '{{ route('rooms.index') }}'
+        }
     });
 
     channel.bind('pusher:member_added', function(member) {

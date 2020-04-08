@@ -9,6 +9,7 @@ class Room extends Model
     protected $fillable = [
         'name',
         'description',
+        'maximum_user'
     ];
     public function messages()
     {

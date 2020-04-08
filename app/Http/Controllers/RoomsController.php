@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Message;
 use App\Room;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class RoomsController extends Controller
 {
@@ -109,7 +110,10 @@ class RoomsController extends Controller
      */
     public function destroy(Request $request)
     {
+        DB::beginTransaction();
+        Message::query()->where('room_id', $request->id)->delete();
         Room::query()->findOrFail($request->id)->delete();
+        DB::commit();
 
         return redirect(\route('rooms.index'));
     }
