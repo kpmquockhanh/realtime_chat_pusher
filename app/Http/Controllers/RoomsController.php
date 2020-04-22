@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Message;
 use App\Room;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class RoomsController extends Controller
@@ -23,7 +24,7 @@ class RoomsController extends Controller
     public function index()
     {
         $viewData = [
-            'rooms' => Room::all()
+            'rooms' => Room::with('user')->get()
         ];
 
         return view('room.index')->with($viewData);
@@ -51,6 +52,7 @@ class RoomsController extends Controller
             'name',
             'description',
         ]);
+        $insertData['user_id'] = Auth::id();
         Room::query()->create($insertData);
 
         return redirect(\route('rooms.index'));
@@ -80,6 +82,9 @@ class RoomsController extends Controller
     public function edit($id)
     {
         $room = Room::query()->findOrFail($id);
+        if (!$room->isOwner()) {
+            abort(403);
+        }
         return view('room.edit', compact('room'));
     }
 
@@ -93,6 +98,10 @@ class RoomsController extends Controller
     public function update(Request $request, $id)
     {
         $room = Room::query()->findOrFail($id);
+
+        if (!$room->isOwner()) {
+            abort(403);
+        }
         $updateData = $request->only([
             'name',
             'description',
@@ -110,6 +119,10 @@ class RoomsController extends Controller
      */
     public function destroy(Request $request)
     {
+        $room = Room::query()->findOrFail($request->id);
+        if (!$room->isOwner()) {
+            abort(403);
+        }
         DB::beginTransaction();
         Message::query()->where('room_id', $request->id)->delete();
         Room::query()->findOrFail($request->id)->delete();

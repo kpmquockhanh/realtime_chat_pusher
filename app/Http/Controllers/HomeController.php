@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Events\MessageDeleted;
 use App\Events\MessagingSent;
 use App\Message;
+use App\Room;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use Pusher\Pusher;
 
 class HomeController extends Controller
@@ -41,6 +43,11 @@ class HomeController extends Controller
             'message' => $request->message,
         ];
 
+        $this->validate($request, [
+            'room_id' => 'integer|required',
+            'message' => 'string|required'
+        ]);
+
         if ($message = Message::query()->create($saveData)) {
             broadcast(new MessagingSent($message));
         }
@@ -48,6 +55,12 @@ class HomeController extends Controller
 
     public function deleteAllMessage(Request $request)
     {
+        $room = Room::query()->findOrFail($request->id);
+        if ($room->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        if ($room->user_id)
         Message::query()->where('room_id', $request->id)->delete();
 
         broadcast(new MessageDeleted($request->id));

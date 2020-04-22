@@ -4,11 +4,12 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Oauth</title>
+        <title>{{ config('app.name') }}</title>
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet" type="text/css">
-
+        <link rel="stylesheet" href="{{ asset('fontawesome/css/all.min.css') }}">
+        <link href="{{ asset('css/app.css') }}" rel="stylesheet">
         <!-- Styles -->
         <style>
             html, body {
@@ -81,17 +82,32 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    Oauth test
+                    {{ config('app.name') }}
                 </div>
-
-                {{--<div class="links">--}}
-                    {{--<a href="https://laravel.com/docs">Documentation</a>--}}
-                    {{--<a href="https://laracasts.com">Laracasts</a>--}}
-                    {{--<a href="https://laravel-news.com">News</a>--}}
-                    {{--<a href="https://nova.laravel.com">Nova</a>--}}
-                    {{--<a href="https://forge.laravel.com">Forge</a>--}}
-                    {{--<a href="https://github.com/laravel/laravel">GitHub</a>--}}
-                {{--</div>--}}
+                @if (!\Illuminate\Support\Facades\Auth::check())
+                    <div class="row">
+                        <div class="col">
+                            <a href="{{ route('login') }}" class="w-100 btn btn-outline-success my-5">
+                                Login
+                            </a>
+                        </div>
+                        <div class="col">
+                            <a href="{{ route('register') }}" class="w-100 btn btn-outline-info my-5">
+                                Register
+                            </a>
+                        </div>
+                    </div>
+                @else
+                    <div class="">
+                        <a href="{{ route('home') }}" class="w-50 btn btn-outline-success my-5">
+                            Home
+                        </a>
+                    </div>
+                @endif
+                <div class="links">
+                    <a href="https://github.com/kpmquockhanh"><i class="fab fa-github"></i> kpmquockhanh</a>
+                    <a href="https://fb.com/kpmquockhanh"><i class="fab fa-facebook"></i> kpmquockhanh</a>
+                </div>
             </div>
         </div>
     </body>

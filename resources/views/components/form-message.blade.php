@@ -5,11 +5,13 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <div>Send message</div>
                     <div>
-                        <span>
+                        @if ($room->user_id === \Illuminate\Support\Facades\Auth::id())
+                            <span>
                             <a class="btn btn-danger text-white" id="delete_all">
                                 {{ __('Delete all') }}
                             </a>
                         </span>
+                        @endif
                         <a href="{{ route('rooms.index') }}" class="btn btn-success">Back</a>
                     </div>
 
@@ -25,7 +27,8 @@
                             </div>
                             <div class="col-2 pl-1">
                                 <button type="submit" class="w-100 btn btn-primary text-center" id="send_message">
-                                    {{ __('Send') }}
+                                    <span class="text"><i class="fa fa-paper-plane"></i></span>
+                                    <span class="loader" style="display: none"><i class="fas fa-spinner fa-spin"></i></span>
                                 </button>
                             </div>
                         </div>
@@ -63,8 +66,7 @@
         let body = $('body');
         let name = '{{ Auth::user()->name }}';
         body.on('click', '#send_message', function () {
-            alert();
-            sendMessage();
+            sendMessage($(this));
         });
         body.on('click', '#delete_all', function () {
             axios.post('{{route('user.delete.all')}}', {
@@ -73,33 +75,44 @@
                 .then(function (response) {
                     if (response.data.status)
                     {
-                        $('#content_message').empty();
-                        $('#content_message').append('<div class="my-2"><span class="font-italic small alert alert-secondary p-1">Message deleted</span></div>');
+                        $('#content_message > div').empty();
+                        $('#content_message > div').append('<div class="py-2"><span class="font-italic small alert alert-secondary p-1">Messages deleted</span></div>');
                     }else {
                         alert("Failed");
                     }
 
                 })
                 .catch(function (error) {
-                    console.log(error);
+                    alert("Error");
                 })
         });
 
         body.on('keyup', '#text', function (e) {
-            if (e.keyCode === 13 && $('#text').val())
+            if (e.keyCode === 13 && $('#text').val() && !$('#send_message').attr('disabled'))
             {
-                sendMessage();
+                sendMessage($('#send_message'));
             }
         });
 
-        function sendMessage() {
+        function sendMessage(target) {
             let text = $('#text').val();
-            $('#content_message > div').prepend(`<div class="py-2 text-right"><span class="alert alert-success p-1"><strong>`+ name +`</strong>: `+ text +`</span></div>`);
-            $.get('{{route('user.send.message')}}', {
+            if (!text) return;
+            target.addClass('loading');
+            target.attr("disabled", true);
+            axios.post('{{route('user.send.message')}}', {
                 'message': text ? text : 'unknown',
                 'room_id': '{{ $room->id }}',
+            })
+                .then(rs => {
+                    $('#content_message > div').prepend(`<div class="py-2 text-right"><span class="alert alert-success p-1"><strong>`+ name +`</strong>: `+ text +`</span></div>`);
+                    $('#text').val('');
+                    target.removeClass('loading');
+                    target.attr("disabled", false);
+                })
+                .catch((error) => {
+                    alert(error)
             });
-            $('#text').val('');
+
         }
     </script>
 @stop

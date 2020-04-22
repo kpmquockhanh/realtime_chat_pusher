@@ -19,10 +19,23 @@ Auth::routes(['verify' => false]);
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-
 Route::prefix('message')->group(function () {
-    Route::get('/sendMessage', 'HomeController@sendMessage')->name('user.send.message');
+    Route::post('/sendMessage', 'HomeController@sendMessage')->name('user.send.message');
     Route::post('/deleteAll', 'HomeController@deleteAllMessage')->name('user.delete.all');
 });
 
 Route::resource("rooms", "RoomsController");
+
+Route::prefix('admin')->group(function () {
+    Route::get('login', 'AdminAuthController@showLoginForm')->name('admin.login');
+    Route::post('login', 'AdminAuthController@login');
+    Route::get('logout', 'AdminAuthController@logout');
+    Route::middleware('auth:admin')->group(function () {
+        Route::get('/', function () {
+            dd('admin');
+    });
+});
+
+
+
+});
